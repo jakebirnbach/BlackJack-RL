@@ -55,6 +55,10 @@ class Hand:
             self.value -= 10
 
     @property
+    def is_soft(self) -> bool:
+        return self._aces > 0
+
+    @property
     def is_bust(self) -> bool:
         return self.value > 21
 

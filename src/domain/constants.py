@@ -30,3 +30,8 @@ class Rank(Enum):
         if self == Rank.ACE:
             return 11
         return self.value
+
+
+class Action(Enum):
+    HIT = "Hit"
+    STAND = "Stand"

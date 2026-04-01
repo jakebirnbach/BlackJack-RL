@@ -3,7 +3,7 @@ from src.domain.player import Player, Dealer
 from random import Random
 
 class BlackJackGame:
-    def __init__(self, player: Player, dealer: Dealer, table_min: int = 1, table_max: int = float('inf'), bj_payout: float = 1.5, rng: Random = None):
+    def __init__(self, player: Player, dealer: Dealer, stand_17: bool = True, table_min: int = 1, table_max: int = float('inf'), bj_payout: float = 1.5, rng: Random = None):
         # Validation Logic
         if player is None:
             raise ValueError("Player cannot be None")
@@ -21,6 +21,7 @@ class BlackJackGame:
         self.deck = Deck(rng=rng)
         self.discard = []
         self.current_bet = 0
+        self.stand_on_17 = stand_17
         self.bj_payout = bj_payout
         self.table_min = table_min
         self.table_max = table_max
@@ -49,6 +50,20 @@ class BlackJackGame:
         for _ in range(2):
             self.player.hand.add_card(self.deck.deal())
             self.dealer.hand.add_card(self.deck.deal())
+
+    def dealer_turn(self) -> None:
+        while self.dealer.hand.value < 17 or (
+                not self.stand_on_17 and self.dealer.hand.value == 17 and self.dealer.hand.is_soft):
+            self.dealer.hit(self.deck.deal())
+            if self.dealer.busted:
+                self.player_wins()
+                return
+        if self.dealer.hand.value > self.player.hand.value:
+            self.dealer_wins()
+        elif self.dealer.hand.value < self.player.hand.value:
+            self.player_wins()
+        else:
+            self.push()
 
     def player_wins(self, multiplier:float = 2) -> None:
         self.player.resolve_outcome(multiplier * self.current_bet)
