@@ -36,3 +36,9 @@ class Action(Enum):
     HIT = "Hit"
     STAND = "Stand"
     DOUBLE_DOWN = "Double Down"
+
+
+class Outcome(Enum):
+    PLAYER_WIN = 1
+    DEALER_WIN = -1
+    PUSH = 0
