@@ -1,7 +1,7 @@
 import unittest
 from random import Random
-from src.domain.constants import Suit, Rank
-from src.domain.models import Card, Deck, Hand
+from domain.constants import Suit, Rank
+from domain.models import Card, Deck, Hand
 
 
 class TestCard(unittest.TestCase):
@@ -73,7 +73,7 @@ class TestHand(unittest.TestCase):
         hand.add_card(Card(Rank.ACE, Suit.SPADE))
         hand.add_card(Card(Rank.SIX, Suit.HEART))
         self.assertEqual(hand.value, 17)
-        self.assertTrue(hand.usable_ace)
+        self.assertTrue(hand.is_soft)
 
     def test_ace_downgrades_to_avoid_bust(self):
         hand = Hand()
@@ -81,7 +81,7 @@ class TestHand(unittest.TestCase):
         hand.add_card(Card(Rank.SIX, Suit.HEART))
         hand.add_card(Card(Rank.KING, Suit.DIAMOND))
         self.assertEqual(hand.value, 17)
-        self.assertFalse(hand.usable_ace)
+        self.assertFalse(hand.is_soft)
 
     def test_two_aces(self):
         hand = Hand()

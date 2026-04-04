@@ -1,5 +1,8 @@
-from src.domain.models import Deck, Card
-from src.domain.player import Player, Dealer
+from typing import Callable
+
+from domain.constants import Action
+from domain.models import Deck, Card, GameState
+from domain.player import Player, Dealer
 from random import Random
 
 class BlackJackGame:
@@ -26,7 +29,7 @@ class BlackJackGame:
         self.table_min = table_min
         self.table_max = table_max
 
-    def start_round(self, bet:int) -> None:
+    def start_round(self, bet:int) -> bool:
         if self.player.bankroll < self.table_min:
             raise ValueError("Bankroll cannot be less than table minimum, need to buy in")
         self.enter_bets(bet)
@@ -34,10 +37,14 @@ class BlackJackGame:
 
         if self.player.has_blackjack and self.dealer.has_blackjack:
             self.push()
+            return False
         elif self.player.has_blackjack:
             self.player_wins(multiplier = (1 + self.bj_payout))
+            return False
         elif self.dealer.has_blackjack:
             self.dealer_wins()
+            return False
+        return True
 
     def enter_bets(self, bet: int):
         if bet > self.table_max:
@@ -65,6 +72,36 @@ class BlackJackGame:
         else:
             self.push()
 
+    def player_turn(self, get_action: Callable[[GameState], Action])-> None:
+        while True:
+            curr_state = GameState(
+                player_value=self.player.hand.value,
+                is_soft=self.player.hand.is_soft,
+                dealer_showing=self.dealer_showing.rank.points,
+                bankroll=self.player.bankroll,
+                current_bet=self.current_bet
+            )
+            action = get_action(curr_state)
+            if action == Action.STAND:
+                break
+            elif action == Action.HIT:
+                self.player.hit(self.deck.deal())
+                if self.player.busted:
+                    self.dealer_wins()
+                    return
+            elif action == Action.DOUBLE_DOWN:
+                if len(self.player.hand.cards) != 2:
+                    raise ValueError("Can only double down on initiial hand")
+                self.enter_bets(self.current_bet)
+                self.player.hit(self.deck.deal())
+                if self.player.busted:
+                    self.dealer_wins()
+                    return
+                break
+
+            else:
+                raise ValueError(f"Invalid action: {action}")
+
     def player_wins(self, multiplier:float = 2) -> None:
         self.player.resolve_outcome(multiplier * self.current_bet)
         self.end_round()
@@ -78,8 +115,8 @@ class BlackJackGame:
         self.end_round()
 
     def end_round(self) -> None:
-        self.player.reset_hand()
-        self.dealer.reset_hand()
+        self.discard.extend(self.player.hand.clear())
+        self.discard.extend(self.dealer.hand.clear())
         self.current_bet = 0
 
     @property

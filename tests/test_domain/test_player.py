@@ -1,7 +1,7 @@
 import unittest
-from src.domain.constants import Rank, Suit
-from src.domain.models import Card
-from src.domain.player import Player, Dealer
+from domain.constants import Rank, Suit
+from domain.models import Card
+from domain.player import Player, Dealer
 
 
 class TestPlayer(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestPlayer(unittest.TestCase):
     def test_reset_hand(self):
         player = Player(100)
         player.hit(Card(Rank.FIVE, Suit.HEART))
-        player.reset_hand()
+        player.hand.clear()
         self.assertEqual(len(player.hand.cards), 0)
         self.assertEqual(player.hand.value, 0)
 

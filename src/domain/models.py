@@ -1,5 +1,6 @@
 from __future__ import annotations
-from .constants import Suit, Rank
+from dataclasses import dataclass
+from domain.constants import Suit, Rank
 from random import Random
 
 
@@ -54,6 +55,13 @@ class Hand:
             self._aces -= 1
             self.value -= 10
 
+    def clear(self) -> list[Card]:
+        cards = self.cards
+        self.cards = []
+        self.value = 0
+        self._aces = 0
+        return cards
+
     @property
     def is_soft(self) -> bool:
         return self._aces > 0
@@ -66,10 +74,14 @@ class Hand:
     def is_blackjack(self) -> bool:
         return self.value == 21 and len(self.cards) == 2
 
-    @property
-    def usable_ace(self) -> bool:
-        return self._aces > 0
-
     def __str__(self) -> str:
         cards_str = ", ".join(str(card) for card in self.cards)
         return f"[{cards_str}] (value: {self.value})"
+
+@dataclass(frozen=True)
+class GameState:
+    player_value: int
+    is_soft: bool
+    dealer_showing: int
+    bankroll: float
+    current_bet: int

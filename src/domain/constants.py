@@ -35,3 +35,4 @@ class Rank(Enum):
 class Action(Enum):
     HIT = "Hit"
     STAND = "Stand"
+    DOUBLE_DOWN = "Double Down"

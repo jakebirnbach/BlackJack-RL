@@ -1,4 +1,4 @@
-from .models import Card, Hand
+from domain.models import Card, Hand
 
 
 class Player:
@@ -6,10 +6,7 @@ class Player:
         if bankroll < 0:
             raise ValueError("bankroll cannot be negative")
         self.bankroll = bankroll
-        self.reset_hand()
-
-    def reset_hand(self) -> None:
-        self.hand : Hand = Hand()
+        self.hand: Hand = Hand()
 
     def place_bet(self, bet: int) -> int:
         if bet > self.bankroll:

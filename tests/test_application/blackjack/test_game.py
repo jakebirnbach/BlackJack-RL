@@ -1,9 +1,9 @@
 import unittest
 from random import Random
-from src.domain.constants import Rank, Suit
-from src.domain.models import Card, Deck, Hand
-from src.domain.player import Player, Dealer
-from src.application.blackjack.game import BlackJackGame
+from domain.constants import Rank, Suit
+from domain.models import Card, Deck, Hand
+from domain.player import Player, Dealer
+from application.blackjack.game import BlackJackGame
 
 
 class TestBlackJackGameConstructor(unittest.TestCase):
