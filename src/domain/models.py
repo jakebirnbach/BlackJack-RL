@@ -5,16 +5,20 @@ from random import Random
 
 
 class Card:
-    def __init__(self, rank: Rank, suit: Suit):
+    def __init__(self, rank: Rank, suit: Suit, deck_num: int = 1) -> None:
         self.rank = rank
         self.suit = suit
+        self.deck_num = deck_num
 
     def __str__(self) -> str:
         return f"{str(self.rank.name).capitalize()} of {self.suit.value}"
 
-
 class Deck:
-    def __init__(self, rng: Random | None = None):
+    def __init__(self, num_decks: int = 1, rng: Random | None = None):
+        if num_decks < 1:
+            raise ValueError("Must be instantiated with at least 1 deck")
+
+        self.num_decks = num_decks
         self.cards: list[Card] = []
         self._rng = rng or Random()
         self.reset()
@@ -29,9 +33,10 @@ class Deck:
 
     def reset(self) -> None:
         self.cards: list[Card] = []
-        for suit in Suit:
-            for rank in Rank:
-                self.cards.append(Card(rank, suit))
+        for deck_num in range(1, self.num_decks + 1):
+            for suit in Suit:
+                for rank in Rank:
+                    self.cards.append(Card(rank, suit, deck_num))
         self.shuffle()
 
 class Hand:

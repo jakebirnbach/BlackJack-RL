@@ -5,12 +5,14 @@ from domain.player import Player, Dealer
 from random import Random
 
 class BlackJackGame:
-    def __init__(self, player: Player, dealer: Dealer, stand_17: bool = True, table_min: int = 1, table_max: float = float('inf'), bj_payout: float = 1.5, rng: Random = None):
+    def __init__(self, player: Player, dealer: Dealer, num_decks: int = 1, stand_17: bool = True,table_min: int = 1, table_max: float = float('inf'), bj_payout: float = 1.5, rng: Random = None):
         # Validation Logic
         if player is None:
             raise ValueError("Player cannot be None")
         if dealer is None:
             raise ValueError("Dealer cannot be None")
+        if num_decks <= 0:
+            raise ValueError("Number of decks must be greater than 0")
         if table_min < 0:
             raise ValueError("Table minimum cannot be negative")
         if table_max < table_min:
@@ -20,7 +22,7 @@ class BlackJackGame:
 
         self.player = player
         self.dealer = dealer
-        self.deck = Deck(rng=rng)
+        self.deck = Deck(num_decks=num_decks,rng=rng)
         self.discard = []
         self.current_bet = 0
         self.stand_on_17 = stand_17

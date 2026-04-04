@@ -6,7 +6,7 @@ from application.strategies.hit17_strategy import Hit17Strategy
 def execute_sandbox():
     player = Player(1000)
     dealer = Dealer(100000)
-    game = BlackJackGame(player, dealer)
+    game = BlackJackGame(player, dealer, num_decks=6)
     orchestrator = GameOrchestrator(game, Hit17Strategy())
 
     results = orchestrator.play_shoe(bet=10)
