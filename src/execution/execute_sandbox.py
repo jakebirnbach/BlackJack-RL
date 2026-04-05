@@ -9,7 +9,7 @@ def execute_sandbox():
     starting_bankroll = 1000
     player: Player = Player(starting_bankroll)
     dealer: Dealer = Dealer(100000)
-    game: BlackJackGame = BlackJackGame(player, dealer, num_decks=2)
+    game: BlackJackGame = BlackJackGame(player, dealer, num_decks=6)
     orchestrator: GameOrchestrator = GameOrchestrator(game, Hit17Strategy())
 
     results: list[OutcomeOutput] = orchestrator.play_shoe(bet=15)
