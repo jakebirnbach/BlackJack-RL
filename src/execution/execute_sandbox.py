@@ -9,7 +9,7 @@ def execute_sandbox():
     game = BlackJackGame(player, dealer, num_decks=6)
     orchestrator = GameOrchestrator(game, Hit17Strategy())
 
-    results = orchestrator.play_shoe(bet=10)
+    results = orchestrator.play_shoe(bet=15)
     print(f"Hands played: {len(results)}")
     print(f"Results: {results}")
     print(f"Player bankroll: {player.bankroll}")

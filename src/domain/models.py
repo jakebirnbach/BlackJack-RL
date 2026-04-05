@@ -1,26 +1,26 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from domain.constants import Suit, Rank
+from domain.constants import Suit, Rank, Outcome, Action
 from random import Random
 
 
 class Card:
-    def __init__(self, rank: Rank, suit: Suit, deck_num: int = 1) -> None:
-        self.rank = rank
-        self.suit = suit
-        self.deck_num = deck_num
+    def __init__(self, rank: Rank, suit: Suit, num_decks: int = 1) -> None:
+        self.rank: Rank = rank
+        self.suit: Suit = suit
+        self.num_decks: int = num_decks
 
     def __str__(self) -> str:
         return f"{str(self.rank.name).capitalize()} of {self.suit.value}"
 
 class Deck:
-    def __init__(self, num_decks: int = 1, rng: Random | None = None):
+    def __init__(self, num_decks: int = 1, rng: Random | None = None) -> None:
         if num_decks < 1:
             raise ValueError("Must be instantiated with at least 1 deck")
 
-        self.num_decks = num_decks
+        self.num_decks: int = num_decks
         self.cards: list[Card] = []
-        self._rng = rng or Random()
+        self._rng: Random = rng or Random()
         self.reset()
 
     def shuffle(self) -> None:
@@ -40,12 +40,12 @@ class Deck:
         self.shuffle()
 
 class Hand:
-    def __init__(self):
+    def __init__(self) -> None:
         self.cards: list[Card] = []
         self.value: int = 0
         self._aces: int = 0
 
-    def add_card(self, card: Card):
+    def add_card(self, card: Card) -> None:
         if card is None:
             raise ValueError("Card is empty")
 
@@ -61,10 +61,10 @@ class Hand:
             self.value -= 10
 
     def clear(self) -> list[Card]:
-        cards = self.cards
-        self.cards = []
-        self.value = 0
-        self._aces = 0
+        cards: list[Card] = self.cards
+        self.cards: list[Card] = []
+        self.value: int = 0
+        self._aces: int = 0
         return cards
 
     @property
@@ -80,7 +80,7 @@ class Hand:
         return self.value == 21 and len(self.cards) == 2
 
     def __str__(self) -> str:
-        cards_str = ", ".join(str(card) for card in self.cards)
+        cards_str: str = ", ".join(str(card) for card in self.cards)
         return f"[{cards_str}] (value: {self.value})"
 
 @dataclass(frozen=True)
@@ -90,3 +90,8 @@ class GameState:
     dealer_showing: int
     bankroll: float
     current_bet: int
+
+@dataclass
+class OutcomeOutput:
+    outcome: Outcome
+    actions: list[tuple[GameState, Action]] # list of game states, and their resulting action
