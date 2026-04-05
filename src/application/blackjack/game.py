@@ -1,3 +1,5 @@
+from functools import total_ordering
+
 from application.strategies.base_strategy import BaseStrategy
 from domain.constants import Action, Outcome
 from domain.models import Deck, Card, GameState, OutcomeOutput
@@ -36,15 +38,17 @@ class BlackJackGame:
         self.enter_bets(bet)
         self.deal_cards()
 
+        total_bet: int = self.current_bet
         if self.player.has_blackjack and self.dealer.has_blackjack:
             self.push()
-            return OutcomeOutput(Outcome.PUSH, [])
+            return OutcomeOutput(Outcome.PUSH, [], total_bet, total_bet)
         elif self.player.has_blackjack:
-            self.player_wins(multiplier = (1 + self.bj_payout))
-            return OutcomeOutput(Outcome.PLAYER_WIN, [])
+            payout: float = (1+self.bj_payout) * self.current_bet
+            self.player_wins(payout)
+            return OutcomeOutput(Outcome.PLAYER_WIN, [], total_bet, payout)
         elif self.dealer.has_blackjack:
             self.dealer_wins()
-            return OutcomeOutput(Outcome.DEALER_WIN, [])
+            return OutcomeOutput(Outcome.DEALER_WIN, [], total_bet, 0)
         return None
 
     def enter_bets(self, bet: int) -> None:
@@ -64,17 +68,21 @@ class BlackJackGame:
                 not self.stand_on_17 and self.dealer.hand.value == 17 and self.dealer.hand.is_soft):
             self.dealer.hit(self.deck.deal())
             if self.dealer.busted:
-                self.player_wins()
-                return OutcomeOutput(Outcome.PLAYER_WIN, player_actions)
+                total_bet: int = self.current_bet
+                payout: float = 2 * self.current_bet
+                self.player_wins(payout)
+                return OutcomeOutput(Outcome.PLAYER_WIN, player_actions, total_bet, payout)
+        total_bet: int = self.current_bet
         if self.dealer.hand.value > self.player.hand.value:
             self.dealer_wins()
-            return OutcomeOutput(Outcome.DEALER_WIN, player_actions)
+            return OutcomeOutput(Outcome.DEALER_WIN, player_actions, total_bet, 0)
         elif self.dealer.hand.value < self.player.hand.value:
-            self.player_wins()
-            return OutcomeOutput(Outcome.PLAYER_WIN, player_actions)
+            payout: float = 2 * self.current_bet
+            self.player_wins(payout)
+            return OutcomeOutput(Outcome.PLAYER_WIN, player_actions,total_bet, payout)
         else:
             self.push()
-            return OutcomeOutput(Outcome.PUSH, player_actions)
+            return OutcomeOutput(Outcome.PUSH, player_actions, total_bet, total_bet)
 
     def player_turn(self, player_strategy: BaseStrategy)-> OutcomeOutput| list[tuple[GameState, Action]]:
         actions: list[tuple[GameState, Action]] = []
@@ -93,24 +101,25 @@ class BlackJackGame:
             elif action == Action.HIT:
                 self.player.hit(self.deck.deal())
                 if self.player.busted:
+                    total_bet: int = self.current_bet
                     self.dealer_wins()
-                    return OutcomeOutput(Outcome.DEALER_WIN, actions)
+                    return OutcomeOutput(Outcome.DEALER_WIN, actions, total_bet, 0)
             elif action == Action.DOUBLE_DOWN:
                 if len(self.player.hand.cards) != 2:
                     raise ValueError("Can only double down on initial hand")
                 self.enter_bets(self.current_bet)
                 self.player.hit(self.deck.deal())
                 if self.player.busted:
+                    total_bet: int = self.current_bet
                     self.dealer_wins()
-                    return OutcomeOutput(Outcome.DEALER_WIN, actions)
+                    return OutcomeOutput(Outcome.DEALER_WIN, actions, total_bet, 0)
                 return actions
             else:
                 raise ValueError(f"Invalid action: {action}")
 
-    def player_wins(self, multiplier:float = 2) -> None:
-        self.player.resolve_outcome(multiplier * self.current_bet)
+    def player_wins(self, payout: float) -> None:
+        self.player.resolve_outcome(payout)
         self.end_round()
-
 
     def dealer_wins(self) -> None:
         self.dealer.resolve_outcome(self.current_bet)

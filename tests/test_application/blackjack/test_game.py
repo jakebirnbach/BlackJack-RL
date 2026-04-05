@@ -91,14 +91,14 @@ class TestOutcomes(unittest.TestCase):
         game = BlackJackGame(Player(100), Dealer(1000))
         game.enter_bets(10)
         game.deal_cards()
-        game.player_wins()
+        game.player_wins(20)
         self.assertEqual(game.player.bankroll, 110)
 
     def test_player_wins_blackjack_payout(self):
         game = BlackJackGame(Player(100), Dealer(1000), bj_payout=1.5)
         game.enter_bets(10)
         game.deal_cards()
-        game.player_wins(multiplier=1 + 1.5)
+        game.player_wins(payout = 2.5 * 10)
         self.assertEqual(game.player.bankroll, 115)
 
     def test_dealer_wins(self):

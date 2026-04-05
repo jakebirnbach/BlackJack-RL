@@ -95,3 +95,5 @@ class GameState:
 class OutcomeOutput:
     outcome: Outcome
     actions: list[tuple[GameState, Action]] # list of game states, and their resulting action
+    bet_amount: int
+    payout: float
