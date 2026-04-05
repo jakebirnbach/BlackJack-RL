@@ -97,3 +97,18 @@ class OutcomeOutput:
     actions: list[tuple[GameState, Action]] # list of game states, and their resulting action
     bet_amount: int
     payout: float
+
+@dataclass
+class OutputStats:
+    starting_bankroll: float
+    ending_bankroll: float
+    hands_played: int
+    wins: int
+    losses: int
+    pushes: int
+    total_wagered: float
+    total_payout:float
+    profit: float
+    roi: float
+    win_rate: float
+    average_bet_amt: float

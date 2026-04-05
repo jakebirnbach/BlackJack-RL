@@ -1,15 +1,18 @@
+from domain.models import OutcomeOutput
 from domain.player import Player, Dealer
 from application.blackjack.game import BlackJackGame
 from application.blackjack.game_orchestrator import GameOrchestrator
 from application.strategies.hit17_strategy import Hit17Strategy
+from application.reporting.stats import StatCalculator
 
 def execute_sandbox():
-    player = Player(1000)
-    dealer = Dealer(100000)
-    game = BlackJackGame(player, dealer, num_decks=6)
-    orchestrator = GameOrchestrator(game, Hit17Strategy())
+    starting_bankroll = 1000
+    player: Player = Player(starting_bankroll)
+    dealer: Dealer = Dealer(100000)
+    game: BlackJackGame = BlackJackGame(player, dealer, num_decks=2)
+    orchestrator: GameOrchestrator = GameOrchestrator(game, Hit17Strategy())
 
-    results = orchestrator.play_shoe(bet=15)
-    print(f"Hands played: {len(results)}")
-    print(f"Results: {results}")
-    print(f"Player bankroll: {player.bankroll}")
+    results: list[OutcomeOutput] = orchestrator.play_shoe(bet=15)
+    ending_bankroll = player.bankroll
+    hand_stats = StatCalculator.calculate_stats(results, starting_bankroll, ending_bankroll)
+    print(hand_stats)
