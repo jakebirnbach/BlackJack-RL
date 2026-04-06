@@ -112,22 +112,3 @@ class OutputStats:
     roi: float
     win_rate: float
     average_bet_amt: float
-
-@dataclass
-class AggregateStats:
-    total_shoes: int
-    total_hands_played: int
-    total_wins: int
-    total_losses: int
-    total_pushes: int
-    total_wagered: float
-    total_profit: float
-    overall_roi: float
-    overall_win_rate: float
-    avg_profit_per_shoe: float
-    std_dev_profit_per_shoe: float
-    min_profit: float
-    max_profit: float
-    avg_hands_per_shoe: float
-    min_ending_bankroll: float
-    max_ending_bankroll: float
