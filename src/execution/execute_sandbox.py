@@ -21,7 +21,7 @@ def execute_sandbox() -> None:
         if num % 1000 == 0:
             print(f"Processing shoe {num} of {NUM_SHOES}")
         player: Player = Player(STARTING_BANKROLL)
-        dealer: Dealer = Dealer(1000000)
+        dealer: Dealer = Dealer()
         game: BlackJackGame = BlackJackGame(player, dealer, num_decks=NUM_DECKS)
         orchestrator: GameOrchestrator = GameOrchestrator(game, PLAYER_STRATEGY)
         results: list[OutcomeOutput] = orchestrator.play_shoe(bet=BET_AMOUNT)

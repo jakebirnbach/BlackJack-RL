@@ -39,6 +39,5 @@ class Player:
         self.bankroll += value
 
 class Dealer(Player):
-    def __init__(self, bankroll: float, stand_on_17: bool = True):
-        super().__init__(bankroll)
-        self.stand_on_17 = stand_on_17
+    def __init__(self):
+        super().__init__(float('inf'))
