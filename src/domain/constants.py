@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, IntEnum
 
 # Suit Enums
 class Suit(Enum):
@@ -8,7 +8,7 @@ class Suit(Enum):
     HEART = 'Heart'
 
 # Rank Enum
-class Rank(Enum):
+class Rank(IntEnum):
     TWO = 2
     THREE = 3
     FOUR = 4
